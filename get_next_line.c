@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: raaribou <raaribou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/11/12 10:24:49 by raaribou          #+#    #+#             */
-/*   Updated: 2026/11/13 05:05:32 by raaribou         ###   ########.fr       */
+/*   Created: 2026/11/13 08:45:49 by raaribou          #+#    #+#             */
+/*   Updated: 2026/11/13 08:56:02 by raaribou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@ char    *read_and_save(int fd, char *cache)
     char    buffer[BUFFER_SIZE + 1];
     char    *temp;
 
-    if (!cache)
-        return (NULL);
+    bytes_read = 0;
     while (!ft_strchr(cache, '\n')
-    && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+        && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
     {
         buffer[bytes_read] = '\0';
         temp = ft_strjoin(cache, buffer);
@@ -35,35 +34,54 @@ char    *read_and_save(int fd, char *cache)
     return (cache);
 }
 
-char *extract_line(char *buffer , int position)
+char    *extract_line(char *cache)
 {
-  char *line;
-  int j;
+    int     i;
+    char    *line;
 
-  j = 0;
-  line = malloc(sizeof(char) * (position + 1));
-  if (!line)
-    return(NULL);
-  while (j < position)
-  {
-    line[j] = buffer[j];
-    j++;
-  }
-  line[j] = '\0';
-  return (line);
+    i = 0;
+    if (!cache || !cache[0])
+        return (NULL);
+    while (cache[i] && cache[i] != '\n')
+        i++;
+    if (cache[i] == '\n')
+        i++;
+    line = ft_substr(cache, 0, i);
+    return (line);
 }
-char *get_next_line(int fd)
+
+char    *update_cache(char *cache, char *line)
 {
-  int i;
-  char *line;
-  static char *cache;
+    char    *new_cache;
+    size_t  line_len;
+    size_t  cache_len;
 
-  i = 0;
+    line_len = ft_strlen(line);
+    cache_len = ft_strlen(cache);
+    new_cache = ft_substr(cache, line_len, cache_len - line_len);
+    free(cache);
+    return (new_cache);
+}
 
-  if (fd == -1 || BUFFER_SIZE == 0)
-    return (NULL);
-  cache = read_and_save(fd ,cache);
-  
+char    *get_next_line(int fd)
+{
+    static char *cache;
+    char        *line;
 
- return(NULL);
+    if (fd < 0 || BUFFER_SIZE <= 0)
+        return (NULL);
+    if (!cache)
+        cache = ft_strdup("");
+    if (!cache)
+        return (NULL);
+    cache = read_and_save(fd, cache);
+    if (!cache)
+        return (NULL);
+    line = extract_line(cache);
+    if (!line)
+        return (free(cache), cache = NULL, NULL);
+    cache = update_cache(cache, line);
+    if (!cache)
+        return (free(line), NULL);
+    return (line);
 }
