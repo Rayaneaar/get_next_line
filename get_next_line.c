@@ -11,13 +11,37 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+char    *read_and_save(int fd, char *cache)
+{
+    ssize_t bytes_read;
+    char    buffer[BUFFER_SIZE + 1];
+    char    *temp;
+
+    if (!cache)
+        return (NULL);
+    while (!ft_strchr(cache, '\n')
+    && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+    {
+        buffer[bytes_read] = '\0';
+        temp = ft_strjoin(cache, buffer);
+        if (!temp)
+            return (free(cache), NULL);
+        free(cache);
+        cache = temp;
+    }
+    if (bytes_read == -1)
+        return (free(cache), NULL);
+    return (cache);
+}
+
 char *extract_line(char *buffer , int position)
 {
   char *line;
   int j;
 
   j = 0;
-  line = malloc(sizeof(char) * position + 1);
+  line = malloc(sizeof(char) * (position + 1));
   if (!line)
     return(NULL);
   while (j < position)
@@ -30,28 +54,16 @@ char *extract_line(char *buffer , int position)
 }
 char *get_next_line(int fd)
 {
-  char buffer[2048];
   int i;
   char *line;
-  int bytes_read;
-  static char *storage;
+  static char *cache;
 
   i = 0;
 
-  if (fd == -1)
+  if (fd == -1 || BUFFER_SIZE == 0)
     return (NULL);
-  bytes_read = read(fd , &buffer , BUFFER_SIZE);
-  if (bytes_read > 0)
-    buffer[bytes_read] = '\0';
-  storage = ft_strjoin(storage , buffer);
-  while (storage[i])
-  {
-    if (storage[i] == '\n')
-    {
-      line = extract_line(storage , i + 1);
-      return (line);
-    }
-    i++;
-  }
-  return(NULL);
+  cache = read_and_save(fd ,cache);
+  
+
+ return(NULL);
 }

@@ -23,6 +23,24 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	int		i;
+	char	*haystack;
+
+	i = 0;
+	haystack = (char *)s;
+	while (haystack[i])
+	{
+		if (haystack[i] == c)
+			return (&haystack[i]);
+		i++;
+	}
+	if (c == '\0')
+		return (&haystack[i]);
+	return (NULL);
+}
+
 char	*ft_strdup(const char *s)
 {
 	char	*dest;
@@ -43,63 +61,49 @@ char	*ft_strdup(const char *s)
 	return (dest);
 }
 
-size_t	ft_strlcat(char *dst, const char *src, size_t size)
+char	*ft_strjoin(const char *s1, const char *s2)
 {
+	char	*new_s;
 	size_t	i;
-	size_t	src_len;
-	size_t	dst_len;
-
-	i = 0;
-	if (size == 0)
-	{
-		if (!src)
-			return (0);
-		return (ft_strlen(src));
-	}
-	src_len = ft_strlen(src);
-	dst_len = ft_strlen(dst);
-	if (dst_len >= size)
-		return (size + src_len);
-	while (src[i] && i < size - dst_len - 1)
-	{
-		dst[dst_len + i] = src[i];
-		i++;
-	}
-	dst[dst_len + i] = '\0';
-	return (src_len + dst_len);
-}
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t size)
-{
-	size_t	i;
-	size_t	src_len;
-
-	i = 0;
-	src_len = ft_strlen(src);
-	if (size == 0)
-		return (src_len);
-	while (src[i] && i < size - 1)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	if (size != 0)
-		dst[i] = '\0';
-	return (src_len);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*str;
-	size_t	total_len;
+	size_t	j;
 
 	if (!s1 || !s2)
-		return (ft_strdup(""));
-	total_len = ft_strlen(s1) + ft_strlen(s2);
-	str = malloc(total_len * sizeof(char) + 1);
-	if (!str)
 		return (NULL);
-	ft_strlcpy(str, s1, total_len + 1);
-	ft_strlcat(str, s2, total_len + 1);
-	return (str);
+	new_s = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!dest)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		new_s[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j])
+		new_s[i++] = s2[j++];
+	new_s[i] = '\0';
+	return (new_s);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+  size_t	i;
+  char	*substring;
+
+  i = 0;
+  if (!s)
+    return (NULL);
+  if (start >= ft_strlen(s))
+    return (ft_strdup(""));
+  substring = malloc(len * sizeof(char) + 1);
+  if (!substring)
+    return (NULL);
+  while (s[start] && i < len)
+  {
+    substring[i] = s[start];
+    i++;
+    start++;
+  }
+  substring[i] = '\0';
+  return (substring);
 }
