@@ -23,11 +23,11 @@ char    *read_and_save(int fd, char *cache)
         && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
     {
         buffer[bytes_read] = '\0';
-        temp = ft_strjoin(cache, buffer);
-        if (!temp)
-            return (free(cache), NULL);
-        free(cache);
-        cache = temp;
+        temp = cach
+        cache = ft_strjoin(cache, buffer);
+        free(temp);
+        if (!cache)
+            return(NULL);
     }
     if (bytes_read == -1)
         return (free(cache), NULL);
@@ -36,17 +36,16 @@ char    *read_and_save(int fd, char *cache)
 
 char    *extract_line(char *cache)
 {
-    int     i;
+    char     *pos;
     char    *line;
 
-    i = 0;
     if (!cache || !cache[0])
-        return (NULL);
-    while (cache[i] && cache[i] != '\n')
-        i++;
-    if (cache[i] == '\n')
-        i++;
-    line = ft_substr(cache, 0, i);
+        return (free(cache) ,NULL);
+    pos = ft_strrchr(cache , '\n');
+    if (!pos)
+        line = ft_strdup(cache);
+    else
+        line = ft_substr(cache, 0, (pos - cache) + 1);
     return (line);
 }
 
