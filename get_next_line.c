@@ -23,7 +23,7 @@ char    *read_and_save(int fd, char *cache)
         && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
     {
         buffer[bytes_read] = '\0';
-        temp = cach
+        temp = cache;
         cache = ft_strjoin(cache, buffer);
         free(temp);
         if (!cache)
@@ -41,7 +41,7 @@ char    *extract_line(char *cache)
 
     if (!cache || !cache[0])
         return (free(cache) ,NULL);
-    pos = ft_strrchr(cache , '\n');
+    pos = ft_strchr(cache , '\n');
     if (!pos)
         line = ft_strdup(cache);
     else
@@ -78,7 +78,7 @@ char    *get_next_line(int fd)
         return (NULL);
     line = extract_line(cache);
     if (!line)
-        return (free(cache), cache = NULL, NULL);
+        return (NULL);
     cache = update_cache(cache, line);
     if (!cache)
         return (free(line), NULL);
