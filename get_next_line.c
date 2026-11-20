@@ -11,17 +11,22 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stddef.h>
 
 char    *read_and_save(int fd, char *cache)
 {
     ssize_t bytes_read;
-    char    buffer[BUFFER_SIZE + 1];
+    char    *buffer;
     char    *temp;
 
-    bytes_read = 0;
+    bytes_read = 1;
     while (!ft_strchr(cache, '\n')
-        && (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+        && bytes_read  > 0)
     {
+        buffer = malloc((size_t) BUFFER_SIZE);
+        if (!buffer)
+          return (NULL);
+        bytes_read =read(fd, buffer, BUFFER_SIZE);
         buffer[bytes_read] = '\0';
         temp = cache;
         cache = ft_strjoin(cache, buffer);
