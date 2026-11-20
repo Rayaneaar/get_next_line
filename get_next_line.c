@@ -33,6 +33,7 @@ char *read_and_save(int fd , char *cache)
     temp = ft_strjoin(cache, buff);
     if (!temp)
       return (free(buff) ,free(cache), NULL);
+    free(cache);
     cache = temp;
   }
   free(buff);
