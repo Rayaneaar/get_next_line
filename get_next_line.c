@@ -17,25 +17,21 @@ char    *read_and_save(int fd, char *cache)
 {
     ssize_t bytes_read;
     char    *buffer;
-    char    *temp;
 
     bytes_read = 1;
-    while (!ft_strchr(cache, '\n')
-        && bytes_read  > 0)
+    buffer = malloc((size_t) BUFFER_SIZE + 1);
+    if (!buffer)
+      return (free(cache),NULL);
+    while ( bytes_read  > 0 &&!ft_strchr(cache, '\n'))
     {
-        buffer = malloc((size_t) BUFFER_SIZE);
-        if (!buffer)
-          return (NULL);
         bytes_read =read(fd, buffer, BUFFER_SIZE);
+        if (bytes_read == -1)
+          return (free(cache), NULL);
         buffer[bytes_read] = '\0';
-        temp = cache;
         cache = ft_strjoin(cache, buffer);
-        free(temp);
         if (!cache)
-            return(NULL);
+            return(free(buffer), NULL);
     }
-    if (bytes_read == -1)
-        return (free(cache), NULL);
     return (cache);
 }
 
