@@ -18,6 +18,7 @@ char *read_and_save(int fd , char *cache)
 {
   char *buff;
   int b_read;
+  char *temp;
 
   buff = malloc(BUFFER_SIZE + 1);
   if (!buff)
@@ -29,9 +30,10 @@ char *read_and_save(int fd , char *cache)
     if (b_read == -1)
       return (free(buff) ,free(cache) , NULL);
     buff[b_read] = '\0';
-    cache = ft_strjoin(cache, buff);
-    if (!cache)
-      return (free(buff) , NULL);
+    temp = ft_strjoin(cache, buff);
+    if (!temp)
+      return (free(buff) ,free(cache), NULL);
+    cache = temp;
   }
   free(buff);
   return (cache);
