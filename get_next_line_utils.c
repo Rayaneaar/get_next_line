@@ -6,10 +6,9 @@
 /*   By: raaribou <raaribou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/11/13 04:34:20 by raaribou          #+#    #+#             */
-/*   Updated: 2026/11/13 04:59:29 by raaribou         ###   ########.fr       */
+/*   Updated: 2026/11/21 18:36:44 by raaribou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "get_next_line.h"
 
@@ -87,23 +86,23 @@ char	*ft_strjoin(const char *s1, const char *s2)
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-  size_t	i;
-  char	*substring;
+	size_t	i;
+	char	*substring;
 
-  i = 0;
-  if (!s)
-    return (NULL);
-  if (start >= ft_strlen(s))
-    return (ft_strdup(""));
-  substring = malloc(len * sizeof(char) + 1);
-  if (!substring)
-    return (NULL);
-  while (s[start] && i < len)
-  {
-    substring[i] = s[start];
-    i++;
-    start++;
-  }
-  substring[i] = '\0';
-  return (substring);
+	i = 0;
+	if (!s)
+		return (NULL);
+	if (start >= ft_strlen(s))
+		return (ft_strdup(""));
+	substring = malloc(len * sizeof(char) + 1);
+	if (!substring)
+		return (NULL);
+	while (s[start] && i < len)
+	{
+		substring[i] = s[start];
+		i++;
+		start++;
+	}
+	substring[i] = '\0';
+	return (substring);
 }
