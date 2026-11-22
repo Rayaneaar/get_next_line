@@ -101,7 +101,7 @@ char	*get_next_line(int fd)
 	line = extract_line(node->cache);
 	if (!line)
 		return (drop_fd(&head, fd), NULL);
-	node->cache = trim(node->cache, ft_strlen(node->cache));
+	node->cache = trim(node->cache, ft_strlen(line));
 	if (!node->cache)
 		drop_fd(&head, fd);
 	return (line);
