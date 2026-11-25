@@ -69,6 +69,7 @@ char	*ft_strjoin(const char *s1, const char *s2)
 	new_s[i] = '\0';
 	return (new_s);
 }
+
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	i;

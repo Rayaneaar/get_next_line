@@ -12,7 +12,14 @@
 
 #include "get_next_line_bonus.h"
 
-static void	drop_fd(t_fds **head, int fd)
+static char	*ft_free(char *s, char *s2)
+{
+	free(s);
+	free(s2);
+	return (NULL);
+}
+
+static char	*drop_fd(t_fds **head, int fd)
 {
 	t_fds	**node;
 	t_fds	*tmp;
@@ -21,31 +28,35 @@ static void	drop_fd(t_fds **head, int fd)
 	while (*node && (*node)->fd != fd)
 		node = &(*node)->next;
 	if (!(*node))
-		return ;
+		return (NULL);
 	tmp = *node;
 	*node = (*node)->next;
 	free(tmp->cache);
 	free(tmp);
+	return (NULL);
 }
+
 static char	*read_and_save(int fd, char *cache)
 {
 	char	*buff;
-	int		b_read;
+	ssize_t	b_read;
 	char	*temp;
 
-	buff = malloc(BUFFER_SIZE + 1);
+	buff = malloc((size_t)BUFFER_SIZE + 1);
 	if (!buff)
-		return (free(cache), NULL);
+		return (ft_free(cache, NULL));
 	b_read = 1;
 	while (b_read > 0 && !ft_strchr(cache, '\n'))
 	{
 		b_read = read(fd, buff, BUFFER_SIZE);
 		if (b_read == -1)
-			return (free(buff), free(cache), NULL);
+			return (ft_free(cache, buff));
+		if (b_read == 0)
+			break ;
 		buff[b_read] = '\0';
 		temp = ft_strjoin(cache, buff);
 		if (!temp)
-			return (free(buff), free(cache), NULL);
+			return (ft_free(cache, buff));
 		free(cache);
 		cache = temp;
 	}
@@ -53,35 +64,32 @@ static char	*read_and_save(int fd, char *cache)
 	return (cache);
 }
 
-static char	*extract_line(char *cache)
+static char	*extract_and_trim(char **cache)
 {
 	char	*line;
-	int		i;
+	char	*new_cache;
+	size_t	i;
+	size_t	len;
 
-	if (!cache || !cache[0])
+	if (!*cache || !**cache)
 		return (NULL);
 	i = 0;
-	while (cache[i] && cache[i] != '\n')
+	while ((*cache)[i] && (*cache)[i] != '\n')
 		i++;
-	if (cache[i] == '\n')
+	if ((*cache)[i] == '\n')
 		i++;
-	line = ft_substr(cache, 0, i);
-	return (line);
-}
-
-static char	*trim(char *cache, size_t len)
-{
-	char	*new_cache;
-	size_t	cache_len;
-
-	if (!cache)
+	line = ft_substr(*cache, 0, i);
+	if (!line)
 		return (NULL);
-	cache_len = ft_strlen(cache);
-	if (len >= cache_len)
-		return (free(cache), NULL);
-	new_cache = ft_substr(cache, len, cache_len - len);
-	free(cache);
-	return (new_cache);
+	len = ft_strlen(*cache);
+	new_cache = NULL;
+	if (i < len)
+		new_cache = ft_substr(*cache, i, len - i);
+	if (i < len && !new_cache)
+		return (ft_free(line, NULL));
+	free(*cache);
+	*cache = new_cache;
+	return (line);
 }
 
 char	*get_next_line(int fd)
@@ -97,12 +105,12 @@ char	*get_next_line(int fd)
 		return (NULL);
 	node->cache = read_and_save(fd, node->cache);
 	if (!node->cache)
-		return (drop_fd(&head, fd), NULL);
-	line = extract_line(node->cache);
-	if (!line)
-		return (drop_fd(&head, fd), NULL);
-	node->cache = trim(node->cache, ft_strlen(line));
-	if (!node->cache)
+		return (drop_fd(&head, fd));
+	line = extract_and_trim(&node->cache);
+	if (!line || !node->cache)
+	{
 		drop_fd(&head, fd);
+		return (line);
+	}
 	return (line);
 }
